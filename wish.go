@@ -34,7 +34,7 @@ func Wish(t T, actual interface{}, check Checker, desired interface{}, opts ...o
 	t.Helper()
 	problemMsg, passed := check(actual, desired)
 	if !passed {
-		t.Log(fmt.Sprintf("%s check rejected:\n%s\n", getCheckerShortName(check), Indent(problemMsg)))
+		t.Log(fmt.Sprintf("%s check rejected:\n%s", getCheckerShortName(check), Indent(problemMsg)))
 		t.Fail()
 	}
 	return passed

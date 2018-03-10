@@ -30,7 +30,6 @@ func ExampleThing() {
 	// 		@@ -1 +1 @@
 	// 		-foobar
 	// 		+bazfomp
-	//
 	// false
 }
 
@@ -49,7 +48,6 @@ func ExampleMultilineString() {
 	// 		 woop\n
 	// 		-wow
 	// 		+wowdiff
-	//
 	// false
 }
 
@@ -74,7 +72,6 @@ func ExampleWish_ShouldEqual_CompareStructsReject() {
 	// 	:
 	//		-: struct { Bar string }{Bar: "asdf"}
 	//		+: struct { Baz string }{Baz: "qwer"}
-	//
 	// false
 }
 
@@ -89,6 +86,5 @@ func ExampleWish_ShouldEqual_TypeMismatch() {
 	// 	:
 	// 		-: "foobar"
 	// 		+: struct {}{}
-	//
 	// false
 }

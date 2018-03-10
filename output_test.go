@@ -124,13 +124,11 @@ func TestGoTestOutputFun(t *testing.T) {
 			        				-snafoo
 			        				+zounds
 			        		
-			        		
 			        	output_test.go:NNN: ShouldEqual check rejected:
 			        			{string}:
 			        				@@ -N +N @@
 			        				-zebras
 			        				+cats
-			        		
 			        		
 			FAIL
 			FAIL	github.com/warpfork/go-wish	N.NNNs
@@ -156,13 +154,11 @@ func TestGoTestOutputFun(t *testing.T) {
 			        				-snafoo
 			        				+zounds
 			        		
-			        		
 			        	output_test.go:NNN: ShouldEqual check rejected:
 			        			{string}:
 			        				@@ -N +N @@
 			        				-zebras
 			        				+cats
-			        		
 			        		
 			        --- PASS: TestGoTestOutputFun_helper/subtest/happy_subsubtest (N.NNs)
 			FAIL
