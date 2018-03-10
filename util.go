@@ -19,7 +19,7 @@ func getCheckerShortName(fn Checker) string {
 	return fqn[cut+1:]
 }
 
-func diff(a, b string) string {
+func strdiff(a, b string) string {
 	result, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
 		A:       escapishSlice(difflib.SplitLines(a)),
 		B:       escapishSlice(difflib.SplitLines(b)),
