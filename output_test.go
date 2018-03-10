@@ -92,3 +92,85 @@ func TestGoTestOutputTree(t *testing.T) {
 		}
 	})
 }
+
+func TestGoTestOutputFun_helper(t *testing.T) {
+	if os.Getenv("forked") == "" {
+		t.SkipNow()
+	}
+	t.Run("subtest", func(t *testing.T) {
+		t.Logf("hello!")
+		t.Run("subsubtest", func(t *testing.T) {
+			Wish(t, "snafoo", ShouldEqual, "zounds")
+			Wish(t, "zebras", ShouldEqual, "cats")
+			Wish(t, "orange", ShouldEqual, "orange")
+		})
+		t.Run("happy subsubtest", func(t *testing.T) {
+			Wish(t, "orange", ShouldEqual, "orange")
+		})
+	})
+}
+
+func TestGoTestOutputFun(t *testing.T) {
+	t.Run("non-verbose", func(t *testing.T) {
+		nom := execGoTest(t, "TestGoTestOutputFun_helper", "")
+		diff := strdiff(nom, Dedent(`
+			--- FAIL: TestGoTestOutputFun_helper (N.NNs)
+			    --- FAIL: TestGoTestOutputFun_helper/subtest (N.NNs)
+			    	output_test.go:NNN: hello!
+			        --- FAIL: TestGoTestOutputFun_helper/subtest/subsubtest (N.NNs)
+			        	output_test.go:NNN: ShouldEqual check rejected:
+			        			{string}:
+			        				@@ -N +N @@
+			        				-snafoo
+			        				+zounds
+			        		
+			        		
+			        	output_test.go:NNN: ShouldEqual check rejected:
+			        			{string}:
+			        				@@ -N +N @@
+			        				-zebras
+			        				+cats
+			        		
+			        		
+			FAIL
+			FAIL	github.com/warpfork/go-wish	N.NNNs
+		`))
+		if diff != "" {
+			t.Errorf("%s", diff)
+		}
+	})
+	t.Run("verbose", func(t *testing.T) {
+		nom := execGoTest(t, "TestGoTestOutputFun_helper", "-v")
+		diff := strdiff(nom, Dedent(`
+			=== RUN   TestGoTestOutputFun_helper
+			=== RUN   TestGoTestOutputFun_helper/subtest
+			=== RUN   TestGoTestOutputFun_helper/subtest/subsubtest
+			=== RUN   TestGoTestOutputFun_helper/subtest/happy_subsubtest
+			--- FAIL: TestGoTestOutputFun_helper (N.NNs)
+			    --- FAIL: TestGoTestOutputFun_helper/subtest (N.NNs)
+			    	output_test.go:NNN: hello!
+			        --- FAIL: TestGoTestOutputFun_helper/subtest/subsubtest (N.NNs)
+			        	output_test.go:NNN: ShouldEqual check rejected:
+			        			{string}:
+			        				@@ -N +N @@
+			        				-snafoo
+			        				+zounds
+			        		
+			        		
+			        	output_test.go:NNN: ShouldEqual check rejected:
+			        			{string}:
+			        				@@ -N +N @@
+			        				-zebras
+			        				+cats
+			        		
+			        		
+			        --- PASS: TestGoTestOutputFun_helper/subtest/happy_subsubtest (N.NNs)
+			FAIL
+			exit status N
+			FAIL	github.com/warpfork/go-wish	N.NNNs
+		`))
+		if diff != "" {
+			t.Errorf("%s", diff)
+		}
+	})
+}
