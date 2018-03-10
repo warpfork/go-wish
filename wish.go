@@ -1,5 +1,9 @@
 package wish
 
+import (
+	"fmt"
+)
+
 // T is an interface alternative to `*testing.T` -- wherever you see this used,
 // use your `*testing.T` object.
 type T interface {
@@ -22,7 +26,9 @@ type T interface {
 func Wish(t T, actual interface{}, check Checker, desired interface{}, opts ...options) bool {
 	t.Helper()
 	problemMsg, passed := check(actual, desired)
-	_ = problemMsg
+	if !passed {
+		fmt.Printf("%s check rejected:\n%s\n", getCheckerShortName(check), problemMsg)
+	}
 	return passed
 }
 
