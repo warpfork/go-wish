@@ -2,6 +2,8 @@ package wish
 
 import (
 	"fmt"
+
+	"github.com/warpfork/go-wish/cmp"
 )
 
 // T is an interface alternative to `*testing.T` -- wherever you see this used,
@@ -39,6 +41,7 @@ type Checker func(actual interface{}, desire interface{}) (problem string, passe
 
 var (
 	_ Checker = ShouldBe
+	_ Checker = ShouldEqual
 )
 
 type options interface {
@@ -58,5 +61,15 @@ func ShouldBe(actual interface{}, desire interface{}) (problem string, passed bo
 	//	actual_rv := reflect.ValueOf(actual)
 	//	desire_rv := reflect.ValueOf(desire)
 	return "", true
+}
 
+func ShouldEqual(actual interface{}, desire interface{}) (string, bool) {
+	s1, ok1 := actual.(string)
+	s2, ok2 := desire.(string)
+	if ok1 && ok2 {
+		diff := strdiff(s1, s2)
+		return diff, diff == ""
+	}
+	diff := cmp.Diff(actual, desire)
+	return diff, diff == ""
 }
