@@ -56,35 +56,37 @@ func TestGoTestOutputTree_helper(t *testing.T) {
 func TestGoTestOutputTree(t *testing.T) {
 	t.Run("non-verbose", func(t *testing.T) {
 		nom := execGoTest(t, "TestGoTestOutputTree_helper", "")
-		diff := strdiff(nom, `--- FAIL: TestGoTestOutputTree_helper (N.NNs)
-    --- FAIL: TestGoTestOutputTree_helper/subtest (N.NNs)
-    	output_test.go:NN: wtf
-        --- FAIL: TestGoTestOutputTree_helper/subtest/subsubtest (N.NNs)
-        	output_test.go:NN: sadz
-FAIL
-FAIL	github.com/warpfork/go-wish	N.NNNs
-`)
+		diff := strdiff(nom, Dedent(`
+			--- FAIL: TestGoTestOutputTree_helper (N.NNs)
+			    --- FAIL: TestGoTestOutputTree_helper/subtest (N.NNs)
+			    	output_test.go:NN: wtf
+			        --- FAIL: TestGoTestOutputTree_helper/subtest/subsubtest (N.NNs)
+			        	output_test.go:NN: sadz
+			FAIL
+			FAIL	github.com/warpfork/go-wish	N.NNNs
+		`))
 		if diff != "" {
 			t.Errorf("%s", diff)
 		}
 	})
 	t.Run("verbose", func(t *testing.T) {
 		nom := execGoTest(t, "TestGoTestOutputTree_helper", "-v")
-		diff := strdiff(nom, `=== RUN   TestGoTestOutputTree_helper
-=== RUN   TestGoTestOutputTree_helper/subtest
-=== RUN   TestGoTestOutputTree_helper/subtest/subsubtest
-=== RUN   TestGoTestOutputTree_helper/subtest/happy_subsubtest
---- FAIL: TestGoTestOutputTree_helper (N.NNs)
-    --- FAIL: TestGoTestOutputTree_helper/subtest (N.NNs)
-    	output_test.go:NN: wtf
-        --- FAIL: TestGoTestOutputTree_helper/subtest/subsubtest (N.NNs)
-        	output_test.go:NN: sadz
-        --- PASS: TestGoTestOutputTree_helper/subtest/happy_subsubtest (N.NNs)
-        	output_test.go:NN: ooh!
-FAIL
-exit status N
-FAIL	github.com/warpfork/go-wish	N.NNNs
-`)
+		diff := strdiff(nom, Dedent(`
+			=== RUN   TestGoTestOutputTree_helper
+			=== RUN   TestGoTestOutputTree_helper/subtest
+			=== RUN   TestGoTestOutputTree_helper/subtest/subsubtest
+			=== RUN   TestGoTestOutputTree_helper/subtest/happy_subsubtest
+			--- FAIL: TestGoTestOutputTree_helper (N.NNs)
+			    --- FAIL: TestGoTestOutputTree_helper/subtest (N.NNs)
+			    	output_test.go:NN: wtf
+			        --- FAIL: TestGoTestOutputTree_helper/subtest/subsubtest (N.NNs)
+			        	output_test.go:NN: sadz
+			        --- PASS: TestGoTestOutputTree_helper/subtest/happy_subsubtest (N.NNs)
+			        	output_test.go:NN: ooh!
+			FAIL
+			exit status N
+			FAIL	github.com/warpfork/go-wish	N.NNNs
+		`))
 		if diff != "" {
 			t.Errorf("%s", diff)
 		}
