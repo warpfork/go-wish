@@ -102,6 +102,7 @@ func TestGoTestOutputFun_helper(t *testing.T) {
 		t.Run("subsubtest", func(t *testing.T) {
 			Wish(t, "snafoo", ShouldEqual, "zounds")
 			Wish(t, "zebras", ShouldEqual, "cats")
+			Wish(t, struct{ Foo string }{}, ShouldEqual, struct{ Bar string }{})
 			Wish(t, "orange", ShouldEqual, "orange")
 		})
 		t.Run("happy subsubtest", func(t *testing.T) {
@@ -129,6 +130,11 @@ func TestGoTestOutputFun(t *testing.T) {
 			        				@@ -N +N @@
 			        				-zebras
 			        				+cats
+			        		
+			        	output_test.go:NNN: ShouldEqual check rejected:
+			        			:
+			        				-: struct { Foo string }{}
+			        				+: struct { Bar string }{}
 			        		
 			FAIL
 			FAIL	github.com/warpfork/go-wish	N.NNNs
@@ -159,6 +165,11 @@ func TestGoTestOutputFun(t *testing.T) {
 			        				@@ -N +N @@
 			        				-zebras
 			        				+cats
+			        		
+			        	output_test.go:NNN: ShouldEqual check rejected:
+			        			:
+			        				-: struct { Foo string }{}
+			        				+: struct { Bar string }{}
 			        		
 			        --- PASS: TestGoTestOutputFun_helper/subtest/happy_subsubtest (N.NNs)
 			FAIL
