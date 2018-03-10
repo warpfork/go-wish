@@ -52,7 +52,11 @@ func ShouldEqual(actual interface{}, desire interface{}) (string, bool) {
 	s2, ok2 := desire.(string)
 	if ok1 && ok2 {
 		diff := strdiff(s1, s2)
-		return diff, diff == ""
+		if diff == "" {
+			return "", true
+		}
+		// munge some strings to look sliiiight more like go-cmp output
+		return "{string}:\n" + Indent(diff), false
 	}
 	diff := cmp.Diff(actual, desire)
 	return diff, diff == ""
