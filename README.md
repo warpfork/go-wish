@@ -5,6 +5,58 @@ wish: a test assertion library for Go
 the Go standard library `testing` package and behaviors of the `go test` command.
 
 
+Show
+----
+
+Write tests like this:
+
+```go
+func TestWishDemo(t *testing.T) {
+	t.Run("subtest", func(t *testing.T) {
+		t.Logf("hello!")
+		t.Run("subsubtest", func(t *testing.T) {
+			Wish(t, "snafoo", ShouldEqual, "zounds")
+			Wish(t, "zebras", ShouldEqual, "cats")
+			Wish(t, struct{ Foo string }{}, ShouldEqual, struct{ Bar string }{})
+			Wish(t, "orange", ShouldEqual, "orange")
+		})
+	})
+}
+```
+
+Get output like this:
+
+```text
+--- FAIL: TestWishDemo (N.NNs)
+    --- FAIL: TestWishDemo/subtest (N.NNs)
+    	output_test.go:NNN: hello!
+        --- FAIL: TestWishDemo/subtest/subsubtest (N.NNs)
+        	output_test.go:NNN: ShouldEqual check rejected:
+        			{string}:
+        				@@ -1 +1 @@
+        				-snafoo
+        				+zounds
+        		
+        	output_test.go:NNN: ShouldEqual check rejected:
+        			{string}:
+        				@@ -1 +1 @@
+        				-zebras
+        				+cats
+        		
+        	output_test.go:NNN: ShouldEqual check rejected:
+        			:
+        				-: struct { Foo string }{}
+        				+: struct { Bar string }{}
+```
+
+`wish` lets you write tests quickly and assert on complex structures with minimal
+effort and typing -- and it gives you great diffs when things *don't* match up.
+
+This example is only very simple structures, but `wish` output scales up:
+arbitrarily complex structures can be compared, and large multi-line strings
+will emit diffs with context (bounded at three lines, to keep output readable).
+
+
 Why another testing library?
 ----------------------------
 
