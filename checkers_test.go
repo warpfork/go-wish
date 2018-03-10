@@ -52,8 +52,8 @@ func TestShouldEqual(t *testing.T) {
 			"asdx",
 		), Dedent(`
 			@@ -1 +1 @@
-			-asdf\n
-			+asdx\n
+			-asdf
+			+asdx
 		`))
 	})
 }

@@ -21,8 +21,8 @@ func getCheckerShortName(fn Checker) string {
 
 func strdiff(a, b string) string {
 	result, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
-		A:       escapishSlice(difflib.SplitLines(a)),
-		B:       escapishSlice(difflib.SplitLines(b)),
+		A:       escapishSlice(strings.SplitAfter(a, "\n")),
+		B:       escapishSlice(strings.SplitAfter(b, "\n")),
 		Context: 3,
 	})
 	if err != nil {
