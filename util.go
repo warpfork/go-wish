@@ -1,9 +1,13 @@
 package wish
 
 import (
+	"fmt"
 	"reflect"
 	"runtime"
+	"strconv"
 	"strings"
+
+	"github.com/warpfork/go-wish/difflib"
 )
 
 func getCheckerShortName(fn Checker) string {
@@ -13,4 +17,28 @@ func getCheckerShortName(fn Checker) string {
 		return fqn
 	}
 	return fqn[cut+1:]
+}
+
+func diff(a, b string) string {
+	result, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A:       escapishSlice(difflib.SplitLines(a)),
+		B:       escapishSlice(difflib.SplitLines(b)),
+		Context: 3,
+	})
+	if err != nil {
+		panic(fmt.Errorf("diffing failed: %s", err))
+	}
+	return result
+}
+
+func escapish(s string) string {
+	q := strconv.Quote(s)
+	return q[1:len(q)-1] + "\n"
+}
+
+func escapishSlice(ss []string) []string {
+	for i, s := range ss {
+		ss[i] = escapish(s)
+	}
+	return ss
 }
