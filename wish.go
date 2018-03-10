@@ -8,8 +8,10 @@ import (
 // use your `*testing.T` object.
 type T interface {
 	Helper()
+	Fail()
 	FailNow()
 	SkipNow()
+	Log(...interface{})
 	Name() string
 
 	// Note the lack of `t.Run` in this interface.  Two reasons:
@@ -25,14 +27,15 @@ type Checker func(actual interface{}, desire interface{}) (problem string, passe
 // Wish makes an assertion that two objects match, using criteria defined by a
 // Checker function, and will log information about this to the given T.
 //
-// Failure to match will not halt the test; it will only log to T, and return
-// false (so you may take alternative debugging paths, or handle halting on your
-// own).
+// Failure to match will log to T, fail the test, and return false (so you
+// may take alternative debugging paths, or handle halting on your own).
+// Failure to match will *not* cause FailNow; execution will continue.
 func Wish(t T, actual interface{}, check Checker, desired interface{}, opts ...options) bool {
 	t.Helper()
 	problemMsg, passed := check(actual, desired)
 	if !passed {
-		fmt.Printf("%s check rejected:\n%s\n", getCheckerShortName(check), problemMsg)
+		t.Log(fmt.Sprintf("%s check rejected:\n%s\n", getCheckerShortName(check), Indent(problemMsg)))
+		t.Fail()
 	}
 	return passed
 }
