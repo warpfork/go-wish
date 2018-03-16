@@ -2,23 +2,27 @@ package wish
 
 import (
 	"bytes"
-	"strings"
 )
 
 // Indent prepends one tab character to each line of a string.
 func Indent(s string) string {
-	if s == "" {
-		return "\t"
+	return string(IndentBytes([]byte(s)))
+}
+
+// IndentBytes is identically to Indent, but works on a byte slice.
+func IndentBytes(bs []byte) []byte {
+	if len(bs) == 0 {
+		return []byte{'\t'}
 	}
-	lines := strings.SplitAfter(s, "\n")
+	lines := bytes.SplitAfter(bs, []byte{'\n'})
 	buf := bytes.Buffer{}
 	for _, line := range lines {
-		if line != "" {
+		if len(line) > 0 {
 			buf.WriteByte('\t')
 		}
-		buf.WriteString(line)
+		buf.Write(line)
 	}
-	return buf.String()
+	return buf.Bytes()
 }
 
 // Dedent strips leading tabs from every line of a string, taking a hint of
@@ -33,13 +37,18 @@ func Indent(s string) string {
 // that contains leading indentation to make it congruent with the
 // surrounding source code.
 func Dedent(s string) string {
-	lines := strings.SplitAfter(s, "\n")
+	return string(DedentBytes([]byte(s)))
+}
+
+// DedentBytes is identically to Dedent, but works on a byte slice.
+func DedentBytes(bs []byte) []byte {
+	lines := bytes.SplitAfter(bs, []byte{'\n'})
 	buf := bytes.Buffer{}
-	if lines[0] == "\n" {
+	if len(lines[0]) == 1 && lines[0][0] == '\n' {
 		lines = lines[1:]
 	}
 	if len(lines) == 0 {
-		return ""
+		return []byte{}
 	}
 	depth := 0
 	for _, r := range lines[0] {
@@ -54,9 +63,9 @@ func Dedent(s string) string {
 			if i < depth && r == '\t' {
 				continue
 			}
-			buf.WriteString(line[i:])
+			buf.Write(line[i:])
 			break
 		}
 	}
-	return buf.String()
+	return buf.Bytes()
 }
