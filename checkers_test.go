@@ -1,6 +1,9 @@
 package wish
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 // helper function for testing our testing tools since we can't use our testing tools!
 func shouldStringMatch(t *testing.T, actual, desire string) {
@@ -56,5 +59,33 @@ func TestShouldEqual(t *testing.T) {
 				-asdf
 				+asdx
 		`))
+	})
+	t.Run("fmt.Errorf errors", func(t *testing.T) {
+		t.Run("compared to equal others of their type", func(t *testing.T) {
+			shouldStringMatch(t, shouldEqual(
+				fmt.Errorf("error zed"),
+				fmt.Errorf("error zed"),
+			), "")
+		})
+		t.Run("compared to distinct others of their type", func(t *testing.T) {
+			shouldStringMatch(t, shouldEqual(
+				fmt.Errorf("error zed"),
+				fmt.Errorf("error fwing"),
+			), Dedent(`
+				{*errors.errorString}.s:
+					-: "error zed"
+					+: "error fwing"
+			`))
+		})
+		t.Run("compared to nil", func(t *testing.T) {
+			shouldStringMatch(t, shouldEqual(
+				fmt.Errorf("error zed"),
+				nil,
+			), Dedent(`
+				:
+					-: &errors.errorString{s: "error zed"}
+					+: <non-existent>
+			`))
+		})
 	})
 }

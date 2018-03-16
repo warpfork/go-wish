@@ -496,7 +496,7 @@ func (s *state) compareStruct(vx, vy reflect.Value, t reflect.Type) {
 				vax = makeAddressable(vx)
 				vay = makeAddressable(vy)
 			}
-			step.force = s.exporters[t]
+			step.force = s.exporters[t] || true
 			step.pvx = vax
 			step.pvy = vay
 			step.field = t.Field(i)
