@@ -12,7 +12,9 @@ type section struct {
 }
 
 func CreateHunks(masterTitle string) Hunks {
-	return Hunks{}
+	return Hunks{
+		title: masterTitle,
+	}
 }
 
 func (h Hunks) GetSectionList() (v []string) {
