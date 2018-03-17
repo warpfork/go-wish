@@ -32,7 +32,7 @@ var exampleFile = wish.Dedent(`
 
 func TestMarshal(t *testing.T) {
 	buf := bytes.Buffer{}
-	err := marshalHunks(&buf, Hunks{
+	err := MarshalHunks(&buf, Hunks{
 		title: "file header",
 		sections: []section{
 			{title: "section foobar", body: []byte("{\n\t\"woo\": \"zow\",\n\t\"indentation\": \"obviously preserved\",\n\t\"json\": [\"not special\"]\n}\n")},
@@ -45,7 +45,7 @@ func TestMarshal(t *testing.T) {
 
 func TestUnmarshal(t *testing.T) {
 	buf := bytes.NewBufferString(exampleFile)
-	hunks, err := unmarshalHunks(buf)
+	hunks, err := UnmarshalHunks(buf)
 	wish.Wish(t, err, wish.ShouldEqual, nil)
 	wish.Wish(t, hunks.title, wish.ShouldEqual, "file header")
 	wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"section foobar", "section baz"})
@@ -58,36 +58,36 @@ func TestUnmarshal(t *testing.T) {
 func TestUnmarshalNittyGritty(t *testing.T) {
 	t.Run("empty files", func(t *testing.T) {
 		buf := bytes.NewBufferString("")
-		_, err := unmarshalHunks(buf)
+		_, err := UnmarshalHunks(buf)
 		wish.Wish(t, err.Error(), wish.ShouldEqual, "error on line 1: first line of file must be a title (e.g. `# title`)")
 	})
 	t.Run("solo header no linebreak", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 	})
 	t.Run("solo header many linebreak", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n\n\n\n")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 	})
 	t.Run("solo header immediate section", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n---\n\n\n")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 	})
 	t.Run("solo header immediate section", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n\n\n\n---\n\n\n")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 	})
 	t.Run("gap between section and title", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n---\n\n\n# title")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 		wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title"})
@@ -95,7 +95,7 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 	t.Run("comments fly right", func(t *testing.T) {
 		t.Run("single line", func(t *testing.T) {
 			buf := bytes.NewBufferString("# whee\n---\n# title\n## comment\n")
-			hunks, err := unmarshalHunks(buf)
+			hunks, err := UnmarshalHunks(buf)
 			wish.Wish(t, err, wish.ShouldEqual, nil)
 			wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 			wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title"})
@@ -104,12 +104,12 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 	})
 	t.Run("title with no space is BS", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n---\n#title\n## comment\n")
-		_, err := unmarshalHunks(buf)
+		_, err := UnmarshalHunks(buf)
 		wish.Wish(t, err.Error(), wish.ShouldEqual, "error on line 3: first line of each section must be a title (e.g. `# title`)")
 	})
 	t.Run("gap before section comment isn't a comment", func(t *testing.T) { // oddly, our "tolerance" modes mean it's a body now.
 		buf := bytes.NewBufferString("# whee\n---\n# title\n\n## comment\n")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 		wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title"})
@@ -118,7 +118,7 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 	})
 	t.Run("comments right up to eof are fine", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n---\n# title\n## comment\n## comment\n## comment")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 		wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title"})
@@ -127,7 +127,7 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 	})
 	t.Run("body with no final section break is tolerated", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n---\n# title\n\nbody\nbody\n")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 		wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title"})
@@ -136,7 +136,7 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 	})
 	t.Run("body with no final line break tolerated", func(t *testing.T) { // also borderline odd.
 		buf := bytes.NewBufferString("# whee\n---\n# title\n\nbody\nbody")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 		wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title"})
@@ -145,7 +145,7 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 	})
 	t.Run("body that runs too close to section edge tolerated", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n---\n# title\nbody\nbody\n---\n# second section\nit's fine\n")
-		hunks, err := unmarshalHunks(buf)
+		hunks, err := UnmarshalHunks(buf)
 		wish.Wish(t, err, wish.ShouldEqual, nil)
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 		wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title", "second section"})

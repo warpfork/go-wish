@@ -10,8 +10,8 @@ import (
 	"github.com/warpfork/go-wish"
 )
 
-// marshalHunks writes out wishfix.Hunks in a deterministic way.
-func marshalHunks(w io.Writer, h Hunks) error {
+// MarshalHunks writes out wishfix.Hunks in a deterministic way.
+func MarshalHunks(w io.Writer, h Hunks) error {
 	// Write file header.
 	w.Write(wordPoundSpace)
 	w.Write([]byte(h.title))
@@ -51,7 +51,13 @@ func marshalHunks(w io.Writer, h Hunks) error {
 	return nil
 }
 
-func unmarshalHunks(r io.Reader) (*Hunks, error) {
+// UnmarshalHunks reads and parses a wishfix.Hunk object.
+//
+// UnmarshalHunks is roughly the dual of MarshalHunks, but note that
+// it follows Postel's Law -- be liberal in what you accept -- and is
+// significantly more tolerant than MarshalHunks.  Many variations in
+// whitespace will be parsed without complaint.
+func UnmarshalHunks(r io.Reader) (*Hunks, error) {
 	bs, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
