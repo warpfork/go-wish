@@ -69,7 +69,7 @@ The `wishfix` format is designed to store a bunch of hunks of data, joined
 together in one human-readable file.  This is slightly different than
 intending to be used as a general-purpose config or serialization format;
 for example, `wishfix` files are supposed to *look good*... and we don't
-care if they don't look good as good when nested, because that's not a thing.
+care if they don't look as good when nested, because that's not a thing.
 
 
 ### Doesn't this look oddly like markdown?
