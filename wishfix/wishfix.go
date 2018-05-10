@@ -27,6 +27,9 @@ func (h Hunks) GetSectionList() (v []string) {
 func (h Hunks) GetSection(title string) []byte {
 	for _, s := range h.sections {
 		if s.title == title {
+			if s.body == nil {
+				return []byte{}
+			}
 			return s.body
 		}
 	}

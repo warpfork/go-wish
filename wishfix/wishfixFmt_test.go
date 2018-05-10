@@ -123,6 +123,7 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 		wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title"})
 		wish.Wish(t, hunks.GetSectionComment("title"), wish.ShouldEqual, "comment\ncomment\ncomment\n")
+		wish.Wish(t, hunks.GetSection("title") == nil, wish.ShouldEqual, false)
 		wish.Wish(t, string(hunks.GetSection("title")), wish.ShouldEqual, "")
 	})
 	t.Run("body with normal indentation flies right", func(t *testing.T) {
@@ -178,6 +179,7 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 			wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
 			wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"section"})
 			wish.Wish(t, hunks.GetSectionComment("section"), wish.ShouldEqual, "")
+			wish.Wish(t, hunks.GetSection("section") == nil, wish.ShouldEqual, false)
 			wish.Wish(t, string(hunks.GetSection("section")), wish.ShouldEqual, "")
 		}
 		t.Run("when the section is empty", func(t *testing.T) {
