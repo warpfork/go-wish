@@ -125,6 +125,23 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 		wish.Wish(t, hunks.GetSectionComment("title"), wish.ShouldEqual, "comment\ncomment\ncomment\n")
 		wish.Wish(t, string(hunks.GetSection("title")), wish.ShouldEqual, "")
 	})
+	t.Run("body with normal indentation flies right", func(t *testing.T) {
+		buf := bytes.NewBufferString(wish.Dedent(`
+			# whee
+			---
+			# title
+			
+				body
+				body
+			
+		`))
+		hunks, err := UnmarshalHunks(buf)
+		wish.Wish(t, err, wish.ShouldEqual, nil)
+		wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
+		wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"title"})
+		wish.Wish(t, hunks.GetSectionComment("title"), wish.ShouldEqual, "")
+		wish.Wish(t, string(hunks.GetSection("title")), wish.ShouldEqual, "body\nbody\n")
+	})
 	t.Run("body with no final section break is tolerated", func(t *testing.T) {
 		buf := bytes.NewBufferString("# whee\n---\n# title\n\nbody\nbody\n")
 		hunks, err := UnmarshalHunks(buf)
@@ -153,5 +170,59 @@ func TestUnmarshalNittyGritty(t *testing.T) {
 		wish.Wish(t, string(hunks.GetSection("title")), wish.ShouldEqual, "body\nbody\n")
 		wish.Wish(t, hunks.GetSectionComment("second section"), wish.ShouldEqual, "")
 		wish.Wish(t, string(hunks.GetSection("second section")), wish.ShouldEqual, "it's fine\n")
+	})
+	t.Run("sections with empty body are blank and not nil", func(t *testing.T) {
+		test := func(t *testing.T, buf *bytes.Buffer) {
+			hunks, err := UnmarshalHunks(buf)
+			wish.Wish(t, err, wish.ShouldEqual, nil)
+			wish.Wish(t, hunks.title, wish.ShouldEqual, "whee")
+			wish.Wish(t, hunks.GetSectionList(), wish.ShouldEqual, []string{"section"})
+			wish.Wish(t, hunks.GetSectionComment("section"), wish.ShouldEqual, "")
+			wish.Wish(t, string(hunks.GetSection("section")), wish.ShouldEqual, "")
+		}
+		t.Run("when the section is empty", func(t *testing.T) {
+			test(t, bytes.NewBufferString(wish.Dedent(`
+				# whee
+				---
+				# section
+			`)))
+		})
+		t.Run("when the section has trailing separator", func(t *testing.T) {
+			test(t, bytes.NewBufferString(wish.Dedent(`
+				# whee
+				---
+				# section
+				---
+			`)))
+		})
+		t.Run("when the section has trailing separator and further trailing space", func(t *testing.T) {
+			test(t, bytes.NewBufferString(wish.Dedent(`
+				# whee
+				---
+				# section
+				---
+				
+				
+			`)))
+		})
+		t.Run("when the section has gap and trailing separator", func(t *testing.T) {
+			test(t, bytes.NewBufferString(wish.Dedent(`
+				# whee
+				---
+				# section
+				
+				
+				---
+			`)))
+		})
+		t.Run("when the section has gap and no trailing separator", func(t *testing.T) {
+			test(t, bytes.NewBufferString(wish.Dedent(`
+				# whee
+				---
+				# section
+				
+				
+			`)))
+		})
 	})
 }

@@ -144,25 +144,25 @@ func UnmarshalHunks(r io.Reader) (*Hunks, error) {
 		// Body begins.  This is *supposed* to be consistently tab-indented,
 		//  but we're actually *very* forgiving.  We'll scan straight to the
 		//   next section break, and take that whole thing.
-		j := i
-		k := j
+		bodyStart := i
+		bodyEnd := i
 		// Look ahead to section break (or, end).
 		//  Also count where we last saw a non-blank line; we'll trim.
-		for !lineIsSectionBreak(lines[j]) {
-			if len(lines[j]) > 0 {
-				k = j
+		for !lineIsSectionBreak(lines[i]) {
+			if len(lines[i]) > 0 {
+				bodyEnd++
 			}
-			j++
-			if j >= max {
+			i++
+			if i >= max {
 				break
 			}
 		}
 		//fmt.Printf("body is on lines %d:%d (next section break on %d)\n", i+1, k+1, j+1)
-		bodyLines := lines[i : k+1]
+		bodyLines := lines[bodyStart:bodyEnd]
 		body := bytes.Join(bodyLines, wordLF) // mem ineffic
 		body = append(body, '\n')
 		sect.body = wish.DedentBytes(body)
-		i = j + 1
+		i++
 		if i >= max {
 			return h, nil
 		}
