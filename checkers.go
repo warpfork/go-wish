@@ -47,17 +47,13 @@ func ShouldBe(actual interface{}, desire interface{}) (problem string, passed bo
 // recursively as necessary.  Maps, slices, and structs are all
 // valid to compare with ShouldEqual.  Pointers will be traversed, and
 // comparison continues with the values referenced by the pointer.
-func ShouldEqual(actual interface{}, desire interface{}) (string, bool) {
+func ShouldEqual(actual interface{}, desire interface{}) (diff string, eq bool) {
 	s1, ok1 := actual.(string)
 	s2, ok2 := desire.(string)
 	if ok1 && ok2 {
-		diff := strdiff(s1, s2)
-		if diff == "" {
-			return "", true
-		}
-		// munge some strings to look sliiiight more like go-cmp output
-		return "{string}:\n" + Indent(diff), false
+		diff = strdiff(s1, s2)
+	} else {
+		diff = cmp.Diff(actual, desire)
 	}
-	diff := cmp.Diff(actual, desire)
 	return diff, diff == ""
 }

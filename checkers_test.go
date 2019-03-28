@@ -56,10 +56,9 @@ func TestShouldEqual(t *testing.T) {
 			"asdf",
 			"asdx",
 		), Dedent(`
-			{string}:
-				@@ -1 +1 @@
-				-asdf
-				+asdx
+			@@ -1 +1 @@
+			- asdf
+			+ asdx
 		`))
 	})
 	t.Run("fmt.Errorf errors", func(t *testing.T) {

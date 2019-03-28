@@ -26,10 +26,9 @@ func ExampleThing() {
 
 	// Output:
 	// ShouldEqual check rejected:
-	// 	{string}:
-	// 		@@ -1 +1 @@
-	// 		-foobar
-	// 		+bazfomp
+	// 	@@ -1 +1 @@
+	// 	- foobar
+	// 	+ bazfomp
 	// false
 }
 
@@ -41,13 +40,12 @@ func ExampleMultilineString() {
 
 	// Output:
 	// ShouldEqual check rejected:
-	// 	{string}:
-	// 		@@ -1,3 +1,3 @@
-	// 		-foobar\n
-	// 		+bazfomp\n
-	// 		 woop\n
-	// 		-wow
-	// 		+wowdiff
+	// 	@@ -1,3 +1,3 @@
+	// 	- foobar\n
+	// 	+ bazfomp\n
+	// 	  woop\n
+	// 	- wow
+	// 	+ wowdiff
 	// false
 }
 

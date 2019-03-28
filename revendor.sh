@@ -38,3 +38,21 @@ EOF
 git clone https://github.com/pmezard/go-difflib .tmp/go-difflib
 cp -r .tmp/go-difflib/difflib/ .
 cp .tmp/go-difflib/LICENSE difflib
+
+patch difflib/difflib.go <<EOF
+@@ -608,3 +608,3 @@ func WriteUnifiedDiff(writer io.Writer, diff UnifiedDiff) error {
+ 				for _, line := range diff.A[i1:i2] {
+-					if err := ws(" " + line); err != nil {
++					if err := ws("  " + line); err != nil {
+ 						return err
+@@ -616,3 +616,3 @@ func WriteUnifiedDiff(writer io.Writer, diff UnifiedDiff) error {
+ 				for _, line := range diff.A[i1:i2] {
+-					if err := ws("-" + line); err != nil {
++					if err := ws("- " + line); err != nil {
+ 						return err
+@@ -623,3 +623,3 @@ func WriteUnifiedDiff(writer io.Writer, diff UnifiedDiff) error {
+ 				for _, line := range diff.B[j1:j2] {
+-					if err := ws("+" + line); err != nil {
++					if err := ws("+ " + line); err != nil {
+ 						return err
+EOF

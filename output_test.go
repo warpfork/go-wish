@@ -120,16 +120,14 @@ func TestGoTestOutputFun(t *testing.T) {
 			        output_test.go:NNN: hello!
 			        --- FAIL: TestGoTestOutputFun_helper/subtest/subsubtest (N.NNs)
 			            output_test.go:NNN: ShouldEqual check rejected:
-			                	{string}:
-			                		@@ -N +N @@
-			                		-snafoo
-			                		+zounds
+			                	@@ -N +N @@
+			                	- snafoo
+			                	+ zounds
 			                
 			            output_test.go:NNN: ShouldEqual check rejected:
-			                	{string}:
-			                		@@ -N +N @@
-			                		-zebras
-			                		+cats
+			                	@@ -N +N @@
+			                	- zebras
+			                	+ cats
 			                
 			            output_test.go:NNN: ShouldEqual check rejected:
 			                	  interface{}(
@@ -156,16 +154,14 @@ func TestGoTestOutputFun(t *testing.T) {
 			        output_test.go:NNN: hello!
 			        --- FAIL: TestGoTestOutputFun_helper/subtest/subsubtest (N.NNs)
 			            output_test.go:NNN: ShouldEqual check rejected:
-			                	{string}:
-			                		@@ -N +N @@
-			                		-snafoo
-			                		+zounds
+			                	@@ -N +N @@
+			                	- snafoo
+			                	+ zounds
 			                
 			            output_test.go:NNN: ShouldEqual check rejected:
-			                	{string}:
-			                		@@ -N +N @@
-			                		-zebras
-			                		+cats
+			                	@@ -N +N @@
+			                	- zebras
+			                	+ cats
 			                
 			            output_test.go:NNN: ShouldEqual check rejected:
 			                	  interface{}(
