@@ -69,9 +69,10 @@ func ExampleWish_ShouldEqual_CompareStructsReject() {
 
 	// Output:
 	// ShouldEqual check rejected:
-	// 	:
-	//		-: struct { Bar string }{Bar: "asdf"}
-	//		+: struct { Baz string }{Baz: "qwer"}
+	// 	  interface{}(
+	// 	- 	struct{ Bar string }{Bar: "asdf"},
+	// 	+ 	struct{ Baz string }{Baz: "qwer"},
+	// 	  )
 	// false
 }
 
@@ -83,8 +84,9 @@ func ExampleWish_ShouldEqual_TypeMismatch() {
 
 	// Output:
 	// ShouldEqual check rejected:
-	// 	:
-	// 		-: "foobar"
-	// 		+: struct {}{}
+	// 	  interface{}(
+	// 	- 	string("foobar"),
+	// 	+ 	struct{}{},
+	// 	  )
 	// false
 }

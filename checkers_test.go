@@ -28,19 +28,21 @@ func TestShouldEqual(t *testing.T) {
 			int(1),
 			int(2),
 		), Dedent(`
-			{int}:
-				-: 1
-				+: 2
+			  int(
+			- 	1,
+			+ 	2,
+			  )
 		`))
 	})
-	t.Run("distinct numeric types", func(t *testing.T) { // This hits unattractive corners of go-cmp.
+	t.Run("distinct numeric types", func(t *testing.T) {
 		shouldStringMatch(t, shouldEqual(
 			int(1),
 			uint(1),
 		), Dedent(`
-			:
-				-: 1
-				+: 0x01
+			  interface{}(
+			- 	int(1),
+			+ 	uint(0x01),
+			  )
 		`))
 	})
 	t.Run("equivalent strings", func(t *testing.T) {
@@ -72,19 +74,20 @@ func TestShouldEqual(t *testing.T) {
 				fmt.Errorf("error zed"),
 				fmt.Errorf("error fwing"),
 			), Dedent(`
-				{*errors.errorString}.s:
-					-: "error zed"
-					+: "error fwing"
+				  &errors.errorString{
+				- 	s: "error zed",
+				+ 	s: "error fwing",
+				  }
 			`))
 		})
-		t.Run("compared to nil", func(t *testing.T) {
+		t.Run("compared to nil", func(t *testing.T) { // This one's weird.  Doesn't explicitly say 'nil' and also is treating errors magically >:/
 			shouldStringMatch(t, shouldEqual(
 				fmt.Errorf("error zed"),
 				nil,
 			), Dedent(`
-				:
-					-: &errors.errorString{s: "error zed"}
-					+: <non-existent>
+				  interface{}(
+				- 	e"error zed",
+				  )
 			`))
 		})
 	})

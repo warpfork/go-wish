@@ -132,9 +132,10 @@ func TestGoTestOutputFun(t *testing.T) {
 			                		+cats
 			                
 			            output_test.go:NNN: ShouldEqual check rejected:
-			                	:
-			                		-: struct { Foo string }{}
-			                		+: struct { Bar string }{}
+			                	  interface{}(
+			                	- 	struct{ Foo string }{},
+			                	+ 	struct{ Bar string }{},
+			                	  )
 			                
 			FAIL
 			FAIL	github.com/warpfork/go-wish	N.NNNs
@@ -167,9 +168,10 @@ func TestGoTestOutputFun(t *testing.T) {
 			                		+cats
 			                
 			            output_test.go:NNN: ShouldEqual check rejected:
-			                	:
-			                		-: struct { Foo string }{}
-			                		+: struct { Bar string }{}
+			                	  interface{}(
+			                	- 	struct{ Foo string }{},
+			                	+ 	struct{ Bar string }{},
+			                	  )
 			                
 			        --- PASS: TestGoTestOutputFun_helper/subtest/happy_subsubtest (N.NNs)
 			FAIL
