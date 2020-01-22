@@ -64,6 +64,7 @@ func TestGoTestOutputTree(t *testing.T) {
 			            output_test.go:NN: sadz
 			FAIL
 			FAIL	github.com/warpfork/go-wish	N.NNNs
+			FAIL
 		`))
 		if diff != "" {
 			t.Errorf("%s", diff)
@@ -137,6 +138,7 @@ func TestGoTestOutputFun(t *testing.T) {
 			                
 			FAIL
 			FAIL	github.com/warpfork/go-wish	N.NNNs
+			FAIL
 		`))
 		if diff != "" {
 			t.Errorf("%s", diff)
