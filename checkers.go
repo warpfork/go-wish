@@ -57,3 +57,39 @@ func ShouldEqual(actual interface{}, desire interface{}) (diff string, eq bool) 
 	}
 	return diff, diff == ""
 }
+
+// ShouldBeSameTypeAs asserts that two values have the same concrete type,
+// while completely ignoring the contents of the values.
+// A nil value of 'actual' with no type is also correctly handled,
+// and reports as an error.  (A nil value of actual *with* a type is not given
+// special treatment, and may pass the check.)
+//
+// ShouldBeSameTypeAs is often particularly useful as part of testing errors,
+// if your package uses strongly typed errors.  (A combination of a Wish of
+// ShouldBeSameTypeAs followed by a Wish of ShouldEqual on the err.Error string
+// is often a good combination of clear and terse and good coverage -- and
+// nicely handles and reports an unexpectedly nil value of the error, as well.)
+func ShouldBeSameTypeAs(actual interface{}, desire interface{}) (diff string, eq bool) {
+	rt_desire := reflect.ValueOf(desire).Type()
+	if actual == nil {
+		return "got untyped nil; wanted a value of type " + rt_desire.String(), false
+	}
+	rt_actual := reflect.ValueOf(actual).Type()
+	if rt_actual == rt_desire {
+		return "", true
+	}
+	if rt_desire.String() == rt_actual.String() { // these names aren't always unique; use longer ones in that case.
+		desire_fullname := rt_desire.PkgPath()
+		if desire_fullname != "" {
+			desire_fullname += "."
+		}
+		desire_fullname += rt_desire.Name()
+		actual_fullname := rt_actual.PkgPath()
+		if actual_fullname != "" {
+			actual_fullname += "."
+		}
+		actual_fullname += rt_actual.Name()
+		return "got value of type " + actual_fullname + "; wanted a value of type " + desire_fullname, false
+	}
+	return "got value of type " + rt_actual.String() + "; wanted a value of type " + rt_desire.String(), false
+}
