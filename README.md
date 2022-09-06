@@ -5,8 +5,21 @@ wish: a test assertion library for Go
 the Go standard library `testing` package and behaviors of the `go test` command.
 
 
-Show
-----
+Status
+------
+
+Deprecated, and unmaintained.  Alternatives are available!
+
+I prefer the https://github.com/frankban/quicktest/ package for testing, these days.  (It has similar goals to go-wish, but has executed them better, and now has many more users!)
+
+If you liked the `wishfix` format: I'm glad, but would now recommend https://github.com/warpfork/go-testmark instead!  It's also human-readable, but _much_ more powerful, and great at embedding in documentation, which is just a superpower.
+
+Between the two of those, there's no further reason to prefer to use go-wish :)
+
+
+
+Showcase
+--------
 
 Write tests like this:
 
